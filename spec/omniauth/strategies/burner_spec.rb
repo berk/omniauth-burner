@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'omniauth-basecrm'
+require 'omniauth-burner'
 
 describe OmniAuth::Strategies::Burner do
   before :each do
@@ -22,15 +22,15 @@ describe OmniAuth::Strategies::Burner do
 
   describe '#client' do
     it 'has correct site' do
-      subject.client.site.should eq('https://api.getbase.com')
+      subject.client.site.should eq('https://app.burnerapp.com')
     end
 
     it 'has correct authorize url' do
-      subject.client.options[:authorize_url].should eq('/oauth2/authorize')
+      subject.client.options[:authorize_url].should eq('https://app.burnerapp.com/oauth/authorize')
     end
 
     it 'has correct token url' do
-      subject.client.options[:token_url].should eq('/oauth2/token')
+      subject.client.options[:token_url].should eq('https://api.burnerapp.com/oauth/access')
     end
   end
 
@@ -63,31 +63,6 @@ describe OmniAuth::Strategies::Burner do
     end
   end
   
-  describe '#raw_info' do
-    before :each do
-      @access_token = double('OAuth2::AccessToken')
-      subject.stub(:access_token) { @access_token }
-    end
-    
-    it 'performs a GET to /v2/accounts/self' do
-      @access_token.stub(:get) { double('OAuth2::Response').as_null_object }
-      @access_token.should_receive(:get).with('/v2/accounts/self')
-      subject.raw_info
-    end
-    
-    it 'returns a Hash' do
-      @access_token.stub(:get).with('/v2/accounts/self') do
-        raw_response = double('Faraday::Response')
-        raw_response.stub(:body) { '{"data": { "ohai": "thar" }}' }
-        raw_response.stub(:status) { 200 }
-        raw_response.stub(:headers) { { 'Content-Type' => 'application/json' } }
-        OAuth2::Response.new(raw_response)
-      end
-      subject.raw_info.should be_a(Hash)
-      subject.raw_info['ohai'].should eq('thar')
-    end
-  end
-
   describe '#credentials' do
     before :each do
       @access_token = double('OAuth2::AccessToken')
@@ -147,10 +122,6 @@ describe OmniAuth::Strategies::Burner do
     
     it 'returns a Hash' do
       subject.extra.should be_a(Hash)
-    end
-    
-    it 'contains raw info' do
-      subject.extra.should eq({ 'user' => @raw_info })
     end
   end
 
