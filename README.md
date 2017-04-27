@@ -7,7 +7,7 @@ Burner OAuth2 Strategy for OmniAuth 1.0.
 
 Supports the OAuth 2.0 server-side. Read the Burner docs for more details: 
 
-https://developers.getbase.com/docs/rest/articles/oauth2/introduction
+http://developer.burnerapp.com/api-documentation/authentication/
 
 ## Installing
 
@@ -37,11 +37,11 @@ You can configure several options, which you pass in to the `provider` method vi
 
 * `scope`: A space-separated list of scopes you want to request from the user. See the Burner docs for a full list of available permissions.
 
-For example, to request `profile` permission:
+For example, to request `messages:connect` permission:
  
 ```ruby
 Rails.application.config.middleware.use OmniAuth::Builder do
-  provider :burner, ENV['BURNER_CLIENT_ID'], ENV['BURNER_SECRET'], :scope => 'profile'
+  provider :burner, ENV['BURNER_CLIENT_ID'], ENV['BURNER_SECRET'], :scope => 'messages:connect burners:read'
 end
 ```
 
@@ -50,28 +50,19 @@ end
 Here's an example *Authentication Hash* available in `request.env['omniauth.auth']`:
 
 ```ruby
+
 {"provider"=>"burner",
- "uid"=>33333,
+ "uid"=>nil,
  "info"=>
-  {
-   "name"=>"Name"},
+   {"connected_burners"=>
+   [{"id"=>"2342343423-234234-234234234-4234", "name"=>"My Burner"}]},
  "credentials"=>
   {"token"=>
     "dfkjadlfkjasdkjflaskdjfjsldflasjdflkasdjflaskdjf",
-   "refresh_token"=>"lkfkjasldjkflaskjdflkasjdlfjkasdljfk",
    "expires_at"=>1489053154,
    "expires"=>true},
- "extra"=>
-  {"user"=>
-    {
-     "id"=>33333,
-     "name"=>"name",
-     "time_format"=>"12H",
-     "timezone"=>"UTC-08:00",
-     "created_at"=>"2015-05-12T01:01:15Z",
-     "updated_at"=>"2017-03-13T17:31:22Z",
-     "currency"=>"USD",
-     "phone"=>"+1 111-111-1111"}}}
+ "extra"=>{}}
+ 
 ```
 
 The precise information available may depend on the permissions which you request.
